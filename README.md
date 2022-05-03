@@ -1,3 +1,10 @@
-# SuperMini-Audio-System
+# Audio-System
+Audio system
 
-Get your audio for your python and lua
+# PortAudio/PortMidi
+* they work
+* they're easy
+* it's all that is needed
+
+
+
