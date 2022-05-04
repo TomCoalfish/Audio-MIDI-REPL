@@ -1,25 +1,21 @@
 # Audio-System
 Audio system
 
-# PortAudio/PortMidi
-* they work
-* they're easy
-* it's all that is needed
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+<pre>
+The text of Version 2, the most current version of the license, written by Sam Hocevar:[4]
 
-# audiosystem.i
-* need to finish the callbacks
-* MIDI messages are handled by callback as it seems to work
-* Audio can be in real-time with jack
+           DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                   Version 2, December 2004
+ 
+Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
 
-# AudioDevice
-* simple c++ portaudio wrapper
+Everyone is permitted to copy and distribute verbatim or modified
+copies of this license document, and changing it is allowed as long
+as the name is changed.
+ 
+           DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+  TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
-# MidiDevice
-* simple c++ portmidi wrapper
-
-# REPL
-* The goal is to have a repl running to program things
-* But Lua is not multithreaded
-* So it needs a special way to buffer the input 
-
-
+ 0. You just DO WHAT THE FUCK YOU WANT TO.
+</pre>
