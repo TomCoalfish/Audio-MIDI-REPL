@@ -31,6 +31,7 @@ void   float_set(float *p, size_t index, float value);
 // MIDI
 /////////////////////////////////////////////
 
+// most of these will probably never get used
 SWIGLUA_REF note_on  = {0,0};
 SWIGLUA_REF note_off = {0,0};
 SWIGLUA_REF control_change  = {0,0};
@@ -45,6 +46,18 @@ SWIGLUA_REF stop_sequence = {0,0};
 SWIGLUA_REF active_sensing = {0,0};
 SWIGLUA_REF system_reset = {0,0};
 SWIGLUA_REF system_exclusive = {0,0};
+SWIGLUA_REF local_control = {0,0};
+SWIGLUA_REF all_notes_off = {0,0};
+SWIGLUA_REF omni_off = {0,0};
+SWIGLUA_REF omni_on = {0,0};
+SWIGLUA_REF mono_mode = {0,0};
+SWIGLUA_REF poly_mode = {0,0};
+SWIGLUA_REF midi_clock = {0,0};
+SWIGLUA_REF midi_timing_code = {0,0};
+SWIGLUA_REF reset_all_controllers = {0,0};
+SWIGLUA_REF song_position = {0,0};
+SWIGLUA_REF song_select = {0,0};
+SWIGLUA_REF tuning_request = {0,0};
 
 void set_note_on_func(SWIGLUA_REF f)
 {
@@ -176,6 +189,54 @@ void set_system_exclusive_func(SWIGLUA_REF f)
     system_exclusive.L = L;        
     */
 }
+void set_local_control_func(SWIGLUA_REF f)
+{
+    local_control = f;    
+}
+void set_all_notes_off_func(SWIGLUA_REF f)
+{
+    all_notes_off = f;    
+}
+void set_omni_off_func(SWIGLUA_REF f)
+{
+    omni_off = f;    
+}
+void set_omni_on_func(SWIGLUA_REF f)
+{
+    omni_on = f;    
+}
+void set_mono_mode_func(SWIGLUA_REF f)
+{
+    mono_mode = f;    
+}
+void set_poly_mode_func(SWIGLUA_REF f)
+{
+    poly_mode = f;    
+}
+void set_clock_func(SWIGLUA_REF f)
+{
+    midi_clock = f;    
+}
+void set_midi_timing_code_func(SWIGLUA_REF f)
+{
+    midi_timing_code = f;    
+}
+void set_reset_all_controllers_func(SWIGLUA_REF f)
+{
+    reset_all_controllers = f;    
+}
+void set_song_position_func(SWIGLUA_REF f)
+{
+    song_position = f;    
+}
+void set_select_func(SWIGLUA_REF f)
+{
+    song_select = f;    
+}
+void set_tuning_request_func(SWIGLUA_REF f)
+{
+    tuning_request = f;    
+}
 
 int midi_channel = 0;
 
@@ -206,17 +267,18 @@ void UnlockMidi()
 
 typedef struct midimsg
 {
-    int status,data1,data2,msg;    
+    int status,data1,data2,msg,channel;    
     struct midimsg * next;
 } 
 MidiMsg;
 
-MidiMsg* NewMessage(int status, int data1, int data2, int msg) {
+MidiMsg* NewMessage(int status, int data1, int data2, int msg, int channel) {
     MidiMsg * p = (MidiMsg*)calloc(1,sizeof(MidiMsg));
     p->status = status;
     p->data1  = data1;
     p->data2  = data2;
     p->msg    = msg;
+    p->channel = channel;
     p->next   = NULL;
     return p;
 }
@@ -231,6 +293,18 @@ void AddMessage(MidiMsg * head, MidiMsg * last) {
 }
 MidiMsg * midi_queue = NULL;
 
+void CallbackLua(SWIGLUA_REF ref, MidiMsg * msg)
+{
+    if(ref.L == NULL) return;
+    swiglua_ref_get(&ref);	
+    lua_pushnumber(ref.L,msg->channel);
+    lua_pushnumber(ref.L,msg->data1);
+    lua_pushnumber(ref.L,msg->data2);
+    if(lua_pcall(ref.L,3,0,0) != 0)
+    {
+        printf("%s", lua_tostring(ref.L,-1));
+    }
+}
 void ExecQueue(MidiMsg * msgs) 
 {
     MidiMsg * p = msgs, *t;
@@ -241,127 +315,136 @@ void ExecQueue(MidiMsg * msgs)
         int data2  = p->data2;
         int msg    = p->msg & 0xF0;
         int channel= p->msg & 0x0F;
-        t = p->next;
-        free(p);
-        p = t;
-
+        
         if( msg == 0x90 && note_on.L != 0)
         {                
             // note on
-            swiglua_ref_get(&note_on);	
-            lua_pushnumber(note_on.L,channel);
-            lua_pushnumber(note_on.L,data1);
-            lua_pushnumber(note_on.L,data2);
-            if(lua_pcall(note_on.L,3,0,0) != 0)
-            {
-                printf("%s", lua_tostring(note_on.L,-1));
-            }
+            CallbackLua(note_on,p);
         }
         else if( msg == 0x80 && note_off.L != 0)
         {
             // note off                
-            swiglua_ref_get(&note_off);	
-            lua_pushnumber(note_off.L,channel);
-            lua_pushnumber(note_off.L,data1);
-            lua_pushnumber(note_off.L,data2);
-            if(lua_pcall(note_off.L,3,0,0) != 0)
-            {
-                printf("%s", lua_tostring(note_off.L,-1));
-            }
-
+            CallbackLua(note_off,p);
         }
         else if(msg == 0xA0)
         {
             // polyphonic pressure
+            CallbackLua(polyphonic_key_pressure,p);
         }
         else if(msg == 0xB0)
         {
             // control change
+            CallbackLua(control_change,p);
         }
         else if(msg == 0xC0)
         {
-            // program change
+            // program change        
+            CallbackLua(program_change,p);
         }
         else if(msg == 0xD0)
         {
             // channel pressure
+            CallbackLua(channel_pressure,p);
+            
         }
         else if(msg == 0xE0)
         {
             // pitchbend
+            CallbackLua(pitch_bend,p);
         }
         else if(status == 0x79)
         {
             // reset all conrollers
+            CallbackLua(reset_all_controllers,p);
         }
         else if(status == 0x7A)
         {
             // local control
+            CallbackLua(local_control,p);
         }
         else if(status == 0x7B)
         {
             // all notes off
+            CallbackLua(all_notes_off,p);
         }
         else if(status == 0x7C)
         {
             // omni off
+            CallbackLua(omni_off,p);
         }
         else if(status == 0x7D)
         {
             // omni on
+            CallbackLua(omni_on,p);
         }
         else if(status == 0x7E)
         {
             // mono mode
+            CallbackLua(mono_mode,p);
         }
         else if(status == 0x7F)
         {
             // poly mode
+            CallbackLua(poly_mode,p);
         }
         else if(status == 0xF8)
         {
             // clock
+            CallbackLua(midi_clock,p);
         }
         else if(status == 0xFA)
         {
             // start sequences
+            CallbackLua(start_sequence,p);
         }
         else if(status == 0xFB)
         {
             // continue sequence
+            CallbackLua(continue_sequence,p);
         }
         else if(status == 0xFC)
         {
             // stop sequence
+            CallbackLua(stop_sequence,p);
         }
         else if(status == 0xFE)
         {
             // active sense
+            CallbackLua(active_sensing,p);
         }
         else if(status == 0xFF)
         {
             // system reset
+            CallbackLua(system_reset,p);
         }
         else if(status == 0xF1)
         {
             // midi timing code
+            CallbackLua(midi_timing_code,p);
         }
         else if(status == 0xF2)
         {
             // song position
+            CallbackLua(song_position,p);
         }
         else if(status == 0xF3)
         {
             // song select
+            CallbackLua(song_select,p);
         }
         else if(status == 0xF6)
         {
             // tune request
+            CallbackLua(tuning_request,p);
         }
         else if(status == 0xF0)
         {
             // system exclusive
+            CallbackLua(system_exclusive,p);
         }
+        t = p->next;
+        free(p);
+        p = t;
     }
 } 
 
@@ -393,7 +476,7 @@ static void process_midi(PtTimestamp timestamp, void * userData)
             data2  = Pm_MessageData2(buffer.message);
             channel = status & 0x0F;
             msg = status & 0xF0;   
-            MidiMsg * pMsg = NewMessage(status,data1,data2,msg);
+            MidiMsg * pMsg = NewMessage(status,data1,data2,msg,channel);
             if(midi_queue == NULL) midi_queue = pMsg;
             else AddMessage(midi_queue,pMsg);
         }

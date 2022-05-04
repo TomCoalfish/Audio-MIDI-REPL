@@ -2783,6 +2783,7 @@ SWIGINTERN int SWIG_lua_isnilstring(lua_State *L, int idx) {
 // MIDI
 /////////////////////////////////////////////
 
+// most of these will probably never get used
 SWIGLUA_REF note_on  = {0,0};
 SWIGLUA_REF note_off = {0,0};
 SWIGLUA_REF control_change  = {0,0};
@@ -2797,6 +2798,18 @@ SWIGLUA_REF stop_sequence = {0,0};
 SWIGLUA_REF active_sensing = {0,0};
 SWIGLUA_REF system_reset = {0,0};
 SWIGLUA_REF system_exclusive = {0,0};
+SWIGLUA_REF local_control = {0,0};
+SWIGLUA_REF all_notes_off = {0,0};
+SWIGLUA_REF omni_off = {0,0};
+SWIGLUA_REF omni_on = {0,0};
+SWIGLUA_REF mono_mode = {0,0};
+SWIGLUA_REF poly_mode = {0,0};
+SWIGLUA_REF midi_clock = {0,0};
+SWIGLUA_REF midi_timing_code = {0,0};
+SWIGLUA_REF reset_all_controllers = {0,0};
+SWIGLUA_REF song_position = {0,0};
+SWIGLUA_REF song_select = {0,0};
+SWIGLUA_REF tuning_request = {0,0};
 
 void set_note_on_func(SWIGLUA_REF f)
 {
@@ -2928,6 +2941,54 @@ void set_system_exclusive_func(SWIGLUA_REF f)
     system_exclusive.L = L;        
     */
 }
+void set_local_control_func(SWIGLUA_REF f)
+{
+    local_control = f;    
+}
+void set_all_notes_off_func(SWIGLUA_REF f)
+{
+    all_notes_off = f;    
+}
+void set_omni_off_func(SWIGLUA_REF f)
+{
+    omni_off = f;    
+}
+void set_omni_on_func(SWIGLUA_REF f)
+{
+    omni_on = f;    
+}
+void set_mono_mode_func(SWIGLUA_REF f)
+{
+    mono_mode = f;    
+}
+void set_poly_mode_func(SWIGLUA_REF f)
+{
+    poly_mode = f;    
+}
+void set_clock_func(SWIGLUA_REF f)
+{
+    midi_clock = f;    
+}
+void set_midi_timing_code_func(SWIGLUA_REF f)
+{
+    midi_timing_code = f;    
+}
+void set_reset_all_controllers_func(SWIGLUA_REF f)
+{
+    reset_all_controllers = f;    
+}
+void set_song_position_func(SWIGLUA_REF f)
+{
+    song_position = f;    
+}
+void set_select_func(SWIGLUA_REF f)
+{
+    song_select = f;    
+}
+void set_tuning_request_func(SWIGLUA_REF f)
+{
+    tuning_request = f;    
+}
 
 int midi_channel = 0;
 
@@ -2958,17 +3019,18 @@ void UnlockMidi()
 
 typedef struct midimsg
 {
-    int status,data1,data2,msg;    
+    int status,data1,data2,msg,channel;    
     struct midimsg * next;
 } 
 MidiMsg;
 
-MidiMsg* NewMessage(int status, int data1, int data2, int msg) {
+MidiMsg* NewMessage(int status, int data1, int data2, int msg, int channel) {
     MidiMsg * p = (MidiMsg*)calloc(1,sizeof(MidiMsg));
     p->status = status;
     p->data1  = data1;
     p->data2  = data2;
     p->msg    = msg;
+    p->channel = channel;
     p->next   = NULL;
     return p;
 }
@@ -2983,6 +3045,18 @@ void AddMessage(MidiMsg * head, MidiMsg * last) {
 }
 MidiMsg * midi_queue = NULL;
 
+void CallbackLua(SWIGLUA_REF ref, MidiMsg * msg)
+{
+    if(ref.L == NULL) return;
+    swiglua_ref_get(&ref);	
+    lua_pushnumber(ref.L,msg->channel);
+    lua_pushnumber(ref.L,msg->data1);
+    lua_pushnumber(ref.L,msg->data2);
+    if(lua_pcall(ref.L,3,0,0) != 0)
+    {
+        printf("%s", lua_tostring(ref.L,-1));
+    }
+}
 void ExecQueue(MidiMsg * msgs) 
 {
     MidiMsg * p = msgs, *t;
@@ -2993,127 +3067,136 @@ void ExecQueue(MidiMsg * msgs)
         int data2  = p->data2;
         int msg    = p->msg & 0xF0;
         int channel= p->msg & 0x0F;
-        t = p->next;
-        free(p);
-        p = t;
-
+        
         if( msg == 0x90 && note_on.L != 0)
         {                
             // note on
-            swiglua_ref_get(&note_on);	
-            lua_pushnumber(note_on.L,channel);
-            lua_pushnumber(note_on.L,data1);
-            lua_pushnumber(note_on.L,data2);
-            if(lua_pcall(note_on.L,3,0,0) != 0)
-            {
-                printf("%s", lua_tostring(note_on.L,-1));
-            }
+            CallbackLua(note_on,p);
         }
         else if( msg == 0x80 && note_off.L != 0)
         {
             // note off                
-            swiglua_ref_get(&note_off);	
-            lua_pushnumber(note_off.L,channel);
-            lua_pushnumber(note_off.L,data1);
-            lua_pushnumber(note_off.L,data2);
-            if(lua_pcall(note_off.L,3,0,0) != 0)
-            {
-                printf("%s", lua_tostring(note_off.L,-1));
-            }
-
+            CallbackLua(note_off,p);
         }
         else if(msg == 0xA0)
         {
             // polyphonic pressure
+            CallbackLua(polyphonic_key_pressure,p);
         }
         else if(msg == 0xB0)
         {
             // control change
+            CallbackLua(control_change,p);
         }
         else if(msg == 0xC0)
         {
-            // program change
+            // program change        
+            CallbackLua(program_change,p);
         }
         else if(msg == 0xD0)
         {
             // channel pressure
+            CallbackLua(channel_pressure,p);
+            
         }
         else if(msg == 0xE0)
         {
             // pitchbend
+            CallbackLua(pitch_bend,p);
         }
         else if(status == 0x79)
         {
             // reset all conrollers
+            CallbackLua(reset_all_controllers,p);
         }
         else if(status == 0x7A)
         {
             // local control
+            CallbackLua(local_control,p);
         }
         else if(status == 0x7B)
         {
             // all notes off
+            CallbackLua(all_notes_off,p);
         }
         else if(status == 0x7C)
         {
             // omni off
+            CallbackLua(omni_off,p);
         }
         else if(status == 0x7D)
         {
             // omni on
+            CallbackLua(omni_on,p);
         }
         else if(status == 0x7E)
         {
             // mono mode
+            CallbackLua(mono_mode,p);
         }
         else if(status == 0x7F)
         {
             // poly mode
+            CallbackLua(poly_mode,p);
         }
         else if(status == 0xF8)
         {
             // clock
+            CallbackLua(midi_clock,p);
         }
         else if(status == 0xFA)
         {
             // start sequences
+            CallbackLua(start_sequence,p);
         }
         else if(status == 0xFB)
         {
             // continue sequence
+            CallbackLua(continue_sequence,p);
         }
         else if(status == 0xFC)
         {
             // stop sequence
+            CallbackLua(stop_sequence,p);
         }
         else if(status == 0xFE)
         {
             // active sense
+            CallbackLua(active_sensing,p);
         }
         else if(status == 0xFF)
         {
             // system reset
+            CallbackLua(system_reset,p);
         }
         else if(status == 0xF1)
         {
             // midi timing code
+            CallbackLua(midi_timing_code,p);
         }
         else if(status == 0xF2)
         {
             // song position
+            CallbackLua(song_position,p);
         }
         else if(status == 0xF3)
         {
             // song select
+            CallbackLua(song_select,p);
         }
         else if(status == 0xF6)
         {
             // tune request
+            CallbackLua(tuning_request,p);
         }
         else if(status == 0xF0)
         {
             // system exclusive
+            CallbackLua(system_exclusive,p);
         }
+        t = p->next;
+        free(p);
+        p = t;
     }
 } 
 
@@ -3145,7 +3228,7 @@ static void process_midi(PtTimestamp timestamp, void * userData)
             data2  = Pm_MessageData2(buffer.message);
             channel = status & 0x0F;
             msg = status & 0xF0;   
-            MidiMsg * pMsg = NewMessage(status,data1,data2,msg);
+            MidiMsg * pMsg = NewMessage(status,data1,data2,msg,channel);
             if(midi_queue == NULL) midi_queue = pMsg;
             else AddMessage(midi_queue,pMsg);
         }
@@ -8524,6 +8607,486 @@ fail:
 }
 
 
+static int _wrap_local_control_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("local_control",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  local_control = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_local_control_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("local_control",0,0)
+  result = local_control;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_all_notes_off_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("all_notes_off",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  all_notes_off = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_all_notes_off_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("all_notes_off",0,0)
+  result = all_notes_off;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_omni_off_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("omni_off",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  omni_off = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_omni_off_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("omni_off",0,0)
+  result = omni_off;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_omni_on_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("omni_on",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  omni_on = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_omni_on_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("omni_on",0,0)
+  result = omni_on;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_mono_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("mono_mode",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  mono_mode = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_mono_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("mono_mode",0,0)
+  result = mono_mode;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_poly_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("poly_mode",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  poly_mode = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_poly_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("poly_mode",0,0)
+  result = poly_mode;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_midi_clock_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("midi_clock",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  midi_clock = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_midi_clock_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("midi_clock",0,0)
+  result = midi_clock;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_midi_timing_code_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("midi_timing_code",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  midi_timing_code = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_midi_timing_code_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("midi_timing_code",0,0)
+  result = midi_timing_code;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_reset_all_controllers_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("reset_all_controllers",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  reset_all_controllers = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_reset_all_controllers_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("reset_all_controllers",0,0)
+  result = reset_all_controllers;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_song_position_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("song_position",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  song_position = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_song_position_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("song_position",0,0)
+  result = song_position;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_song_select_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("song_select",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  song_select = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_song_select_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("song_select",0,0)
+  result = song_select;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_tuning_request_set(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("tuning_request",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  tuning_request = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_tuning_request_get(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF result;
+  
+  SWIG_check_num_args("tuning_request",0,0)
+  result = tuning_request;
+  if ((&result)->L!=0)  {
+    swiglua_ref_get(&result);
+  } else {
+    lua_pushnil(L);
+  }
+  SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_set_note_on_func(lua_State* L) {
   int SWIG_arg = 0;
   SWIGLUA_REF arg1 ;
@@ -8765,6 +9328,222 @@ static int _wrap_set_system_exclusive_func(lua_State* L) {
   SWIG_check_num_args("set_system_exclusive_func",1,1)
   swiglua_ref_set(&arg1,L,1); 
   set_system_exclusive_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_local_control_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_local_control_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_local_control_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_all_notes_off_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_all_notes_off_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_all_notes_off_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_omni_off_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_omni_off_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_omni_off_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_omni_on_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_omni_on_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_omni_on_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_mono_mode_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_mono_mode_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_mono_mode_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_poly_mode_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_poly_mode_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_poly_mode_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_clock_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_clock_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_clock_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_midi_timing_code_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_midi_timing_code_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_midi_timing_code_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_reset_all_controllers_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_reset_all_controllers_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_reset_all_controllers_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_song_position_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_song_position_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_song_position_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_select_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_select_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_select_func(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_set_tuning_request_func(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  
+  SWIG_check_num_args("set_tuning_request_func",1,1)
+  swiglua_ref_set(&arg1,L,1); 
+  set_tuning_request_func(arg1);
   
   return SWIG_arg;
   
@@ -9201,6 +9980,56 @@ fail:
 }
 
 
+static int _wrap_MidiMsg_channel_set(lua_State* L) {
+  int SWIG_arg = 0;
+  struct midimsg *arg1 = (struct midimsg *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("midimsg::channel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("midimsg::channel",1,"struct midimsg *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("midimsg::channel",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_midimsg,0))){
+    SWIG_fail_ptr("MidiMsg_channel_set",1,SWIGTYPE_p_midimsg);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->channel = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_MidiMsg_channel_get(lua_State* L) {
+  int SWIG_arg = 0;
+  struct midimsg *arg1 = (struct midimsg *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("midimsg::channel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("midimsg::channel",1,"struct midimsg *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_midimsg,0))){
+    SWIG_fail_ptr("MidiMsg_channel_get",1,SWIGTYPE_p_midimsg);
+  }
+  
+  result = (int) ((arg1)->channel);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_MidiMsg_next_set(lua_State* L) {
   int SWIG_arg = 0;
   struct midimsg *arg1 = (struct midimsg *) 0 ;
@@ -9289,6 +10118,7 @@ static swig_lua_attribute swig_MidiMsg_attributes[] = {
     { "data1", _wrap_MidiMsg_data1_get, _wrap_MidiMsg_data1_set },
     { "data2", _wrap_MidiMsg_data2_get, _wrap_MidiMsg_data2_set },
     { "msg", _wrap_MidiMsg_msg_get, _wrap_MidiMsg_msg_set },
+    { "channel", _wrap_MidiMsg_channel_get, _wrap_MidiMsg_channel_set },
     { "next", _wrap_MidiMsg_next_get, _wrap_MidiMsg_next_set },
     {0,0,0}
 };
@@ -9330,18 +10160,21 @@ static int _wrap_NewMessage(lua_State* L) {
   int arg2 ;
   int arg3 ;
   int arg4 ;
+  int arg5 ;
   MidiMsg *result = 0 ;
   
-  SWIG_check_num_args("NewMessage",4,4)
+  SWIG_check_num_args("NewMessage",5,5)
   if(!lua_isnumber(L,1)) SWIG_fail_arg("NewMessage",1,"int");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("NewMessage",2,"int");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("NewMessage",3,"int");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("NewMessage",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("NewMessage",5,"int");
   arg1 = (int)lua_tonumber(L, 1);
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
   arg4 = (int)lua_tonumber(L, 4);
-  result = (MidiMsg *)NewMessage(arg1,arg2,arg3,arg4);
+  arg5 = (int)lua_tonumber(L, 5);
+  result = (MidiMsg *)NewMessage(arg1,arg2,arg3,arg4,arg5);
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_midimsg,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9413,6 +10246,31 @@ static int _wrap_midi_queue_get(lua_State* L) {
   SWIG_check_num_args("midi_queue",0,0)
   result = (MidiMsg *)midi_queue;
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_midimsg,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_CallbackLua(lua_State* L) {
+  int SWIG_arg = 0;
+  SWIGLUA_REF arg1 ;
+  MidiMsg *arg2 = (MidiMsg *) 0 ;
+  
+  SWIG_check_num_args("CallbackLua",2,2)
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("CallbackLua",2,"MidiMsg *");
+  swiglua_ref_set(&arg1,L,1); 
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_midimsg,0))){
+    SWIG_fail_ptr("CallbackLua",2,SWIGTYPE_p_midimsg);
+  }
+  
+  CallbackLua(arg1,arg2);
+  
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -10108,6 +10966,18 @@ static swig_lua_attribute swig_SwigModule_attributes[] = {
     { "active_sensing", _wrap_active_sensing_get, _wrap_active_sensing_set },
     { "system_reset", _wrap_system_reset_get, _wrap_system_reset_set },
     { "system_exclusive", _wrap_system_exclusive_get, _wrap_system_exclusive_set },
+    { "local_control", _wrap_local_control_get, _wrap_local_control_set },
+    { "all_notes_off", _wrap_all_notes_off_get, _wrap_all_notes_off_set },
+    { "omni_off", _wrap_omni_off_get, _wrap_omni_off_set },
+    { "omni_on", _wrap_omni_on_get, _wrap_omni_on_set },
+    { "mono_mode", _wrap_mono_mode_get, _wrap_mono_mode_set },
+    { "poly_mode", _wrap_poly_mode_get, _wrap_poly_mode_set },
+    { "midi_clock", _wrap_midi_clock_get, _wrap_midi_clock_set },
+    { "midi_timing_code", _wrap_midi_timing_code_get, _wrap_midi_timing_code_set },
+    { "reset_all_controllers", _wrap_reset_all_controllers_get, _wrap_reset_all_controllers_set },
+    { "song_position", _wrap_song_position_get, _wrap_song_position_set },
+    { "song_select", _wrap_song_select_get, _wrap_song_select_set },
+    { "tuning_request", _wrap_tuning_request_get, _wrap_tuning_request_set },
     { "midi_channel", _wrap_midi_channel_get, _wrap_midi_channel_set },
     { "pm_midi_input", _wrap_pm_midi_input_get, _wrap_pm_midi_input_set },
     { "pm_midi_output", _wrap_pm_midi_output_get, _wrap_pm_midi_output_set },
@@ -10310,12 +11180,25 @@ static swig_lua_method swig_SwigModule_methods[]= {
     { "set_active_sensing_func", _wrap_set_active_sensing_func},
     { "set_system_reset_func", _wrap_set_system_reset_func},
     { "set_system_exclusive_func", _wrap_set_system_exclusive_func},
+    { "set_local_control_func", _wrap_set_local_control_func},
+    { "set_all_notes_off_func", _wrap_set_all_notes_off_func},
+    { "set_omni_off_func", _wrap_set_omni_off_func},
+    { "set_omni_on_func", _wrap_set_omni_on_func},
+    { "set_mono_mode_func", _wrap_set_mono_mode_func},
+    { "set_poly_mode_func", _wrap_set_poly_mode_func},
+    { "set_clock_func", _wrap_set_clock_func},
+    { "set_midi_timing_code_func", _wrap_set_midi_timing_code_func},
+    { "set_reset_all_controllers_func", _wrap_set_reset_all_controllers_func},
+    { "set_song_position_func", _wrap_set_song_position_func},
+    { "set_select_func", _wrap_set_select_func},
+    { "set_tuning_request_func", _wrap_set_tuning_request_func},
     { "GetNumMidiDevices", _wrap_GetNumMidiDevices},
     { "GetMidiDeviceName", _wrap_GetMidiDeviceName},
     { "LockMidi", _wrap_LockMidi},
     { "UnlockMidi", _wrap_UnlockMidi},
     { "NewMessage", _wrap_NewMessage},
     { "AddMessage", _wrap_AddMessage},
+    { "CallbackLua", _wrap_CallbackLua},
     { "ExecQueue", _wrap_ExecQueue},
     { "RunQueue", _wrap_RunQueue},
     { "process_midi", _wrap_process_midi},
