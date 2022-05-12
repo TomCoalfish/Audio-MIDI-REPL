@@ -1,3 +1,3 @@
 # Lua-Audio-System
-Audio system
+Audio/Midi system
 
