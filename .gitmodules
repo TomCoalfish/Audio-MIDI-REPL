@@ -1,0 +1,27 @@
+[submodule "cli/ReSampler"]
+	path = cli/ReSampler
+	url = https://github.com/jniemann66/ReSampler
+[submodule "cli/sox"]
+	path = cli/sox
+	url = https://github.com/chirlu/sox
+[submodule "cli/soxr"]
+	path = cli/soxr
+	url = https://github.com/chirlu/soxr
+[submodule "cli/SNDtools"]
+	path = cli/SNDtools
+	url = https://github.com/sh01k/SNDtools
+[submodule "cli/sndfile-tools"]
+	path = cli/sndfile-tools
+	url = https://github.com/libsndfile/sndfile-tools
+[submodule "cli/AudioAnalyzer"]
+	path = cli/AudioAnalyzer
+	url = https://github.com/SumuduLansakara/AudioAnalyzer
+[submodule "cli/synth"]
+	path = cli/synth
+	url = https://github.com/graue/synth
+[submodule "cli/audio-filter"]
+	path = cli/audio-filter
+	url = https://github.com/HanyzPAPU/audio-filter
+[submodule "cli/ecasound"]
+	path = cli/ecasound
+	url = https://github.com/kaivehmanen/ecasound
