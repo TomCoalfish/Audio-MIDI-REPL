@@ -1,0 +1,24 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: mephisto.lv2
+Upstream-Contact: Hanspeter Portner <dev@open-music-kontrollers.ch>
+Source: https://git.open-music-kontrollers.ch/lv2/mephisto.lv2/
+
+Files: subprojects/d2tk/pugl/*
+Copyright: David Robillard <d@drobilla.net>
+License: ISC
+
+Files: subprojects/d2tk/linenoise/*
+Copyright: Salvatore Sanfilippo <antirez@gmail.com>
+License: BSD-2-Clause
+
+Files: subprojects/d2tk/nanovg/*
+Copyright: Mikko Mononen <memon@inside.org>
+License: Zlib
+
+Files: subprojects/d2tk/utf8.h/*
+Copyright: Neil Henning <github.com/sheredom/utf8.h>
+License: Unlicense
+
+Files: subprojects/d2tk/src/mum.h
+Copyright: 2016, 2017, 2018 Vladimir Makarov <vmakarov@gcc.gnu.org>
+License: MIT

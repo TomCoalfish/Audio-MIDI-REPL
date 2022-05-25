@@ -1,0 +1,132 @@
+[submodule "modules/ladspa/ladspa"]
+	path = modules/ladspa/ladspa
+	url = https://github.com/swh/ladspa
+[submodule "modules/ladspa/ladspamm"]
+	path = modules/ladspa/ladspamm
+	url = https://github.com/fps/ladspamm
+[submodule "modules/tap-plugins"]
+	path = modules/tap-plugins
+	url = https://github.com/tomszilagyi/tap-plugins
+[submodule "modules/zam-plugins"]
+	path = modules/zam-plugins
+	url = https://github.com/zamaudio/zam-plugins
+[submodule "modules/twk-ladspa-plugins"]
+	path = modules/twk-ladspa-plugins
+	url = https://github.com/TimKrause2/twk-ladspa-plugins
+[submodule "modules/AnalogTapeModel"]
+	path = modules/AnalogTapeModel
+	url = https://github.com/jatinchowdhury18/AnalogTapeModel
+[submodule "modules/WaveguideLibrary"]
+	path = modules/WaveguideLibrary
+	url = https://github.com/JelleBakker/WaveguideLibrary
+[submodule "modules/FilterDesigner"]
+	path = modules/FilterDesigner
+	url = https://github.com/bjornrd/FilterDesigner
+[submodule "modules/FilterDesigner2"]
+	path = modules/FilterDesigner2
+	url = https://github.com/Kitsunoir/FilterDesigner
+[submodule "modules/QFilterDesigner"]
+	path = modules/QFilterDesigner
+	url = https://github.com/weigq/QFilterDesigner
+[submodule "modules/FirFilterDesigner"]
+	path = modules/FirFilterDesigner
+	url = https://github.com/aliihsancengiz/FirFilterDesigner
+[submodule "modules/libxd"]
+	path = modules/libxd
+	url = https://github.com/bernhardfritz/libxd
+[submodule "modules/Graphics/libxd"]
+	path = modules/Graphics/libxd
+	url = https://github.com/bernhardfritz/libxd
+[submodule "modules/Graphics/piksel"]
+	path = modules/Graphics/piksel
+	url = https://github.com/bernhardfritz/piksel
+[submodule "modules/Graphics/kcanvas"]
+	path = modules/Graphics/kcanvas
+	url = https://github.com/livingcreative/kcanvas
+[submodule "modules/Graphics/niji"]
+	path = modules/Graphics/niji
+	url = https://github.com/jamboree/niji
+[submodule "modules/Graphics/nanovg"]
+	path = modules/Graphics/nanovg
+	url = https://github.com/memononen/nanovg
+[submodule "modules/Graphics/nanosvg"]
+	path = modules/Graphics/nanosvg
+	url = https://github.com/memononen/nanosvg
+[submodule "modules/Graphics/picasso"]
+	path = modules/Graphics/picasso
+	url = https://github.com/onecoolx/picasso
+[submodule "modules/Graphics/artist"]
+	path = modules/Graphics/artist
+	url = https://github.com/cycfi/artist
+[submodule "modules/Graphics/imgui-knobs"]
+	path = modules/Graphics/imgui-knobs
+	url = https://github.com/altschuler/imgui-knobs
+[submodule "modules/Graphics/imgui-plot"]
+	path = modules/Graphics/imgui-plot
+	url = https://github.com/soulthreads/imgui-plot
+[submodule "modules/Graphics/implot"]
+	path = modules/Graphics/implot
+	url = https://github.com/epezent/implot
+[submodule "modules/Graphics/imgui_stateful_canvas"]
+	path = modules/Graphics/imgui_stateful_canvas
+	url = https://github.com/Teknologicus/imgui_stateful_canvas
+[submodule "modules/Graphics/im-grid"]
+	path = modules/Graphics/im-grid
+	url = https://github.com/sustainablelab/im-grid
+[submodule "modules/Graphics/wave-gui"]
+	path = modules/Graphics/wave-gui
+	url = https://github.com/ggerganov/wave-gui
+[submodule "modules/Graphics/wave-generator"]
+	path = modules/Graphics/wave-generator
+	url = https://github.com/ValeryKameko/wave-generator
+[submodule "modules/Graphics/midi"]
+	path = modules/Graphics/midi
+	url = https://github.com/shric/midi
+[submodule "modules/Graphics/sequentity"]
+	path = modules/Graphics/sequentity
+	url = https://github.com/alanjfs/sequentity
+[submodule "modules/Graphics/ImGuiAl"]
+	path = modules/Graphics/ImGuiAl
+	url = https://github.com/leiradel/ImGuiAl
+[submodule "modules/Graphics/imgui-terminal"]
+	path = modules/Graphics/imgui-terminal
+	url = https://github.com/timmoorhouse/imgui-terminal
+[submodule "modules/Graphics/ImGui_Widgets"]
+	path = modules/Graphics/ImGui_Widgets
+	url = https://github.com/yumataesu/ImGui_Widgets
+[submodule "modules/Graphics/imgui-console"]
+	path = modules/Graphics/imgui-console
+	url = https://github.com/rmxbalanque/imgui-console
+[submodule "modules/Graphics/ImWidgets"]
+	path = modules/Graphics/ImWidgets
+	url = https://github.com/aiekick/ImWidgets
+[submodule "modules/Graphics/imdesigner"]
+	path = modules/Graphics/imdesigner
+	url = https://github.com/geekowll/imdesigner
+[submodule "modules/Graphics/imnodes"]
+	path = modules/Graphics/imnodes
+	url = https://github.com/Nelarius/imnodes
+[submodule "modules/Graphics/ImStudio"]
+	path = modules/Graphics/ImStudio
+	url = https://github.com/Raais/ImStudio
+[submodule "modules/pmsynth"]
+	path = modules/pmsynth
+	url = https://github.com/valmcc/pmsynth
+[submodule "modules/Physyn"]
+	path = modules/Physyn
+	url = https://github.com/foolswood/Physyn
+[submodule "modules/PolyBLEP"]
+	path = modules/PolyBLEP
+	url = https://github.com/martinfinke/PolyBLEP
+[submodule "modules/stksynth"]
+	path = modules/stksynth
+	url = https://github.com/tobias-froehlich/stksynth
+[submodule "lua/LuaJIT-ImGui"]
+	path = lua/LuaJIT-ImGui
+	url = https://github.com/sonoro1234/LuaJIT-ImGui
+[submodule "lua/LuaJIT-GLFW"]
+	path = lua/LuaJIT-GLFW
+	url = https://github.com/sonoro1234/LuaJIT-GLFW
+[submodule "lua/moonfltk"]
+	path = lua/moonfltk
+	url = https://github.com/stetre/moonfltk

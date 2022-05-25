@@ -1,0 +1,95 @@
+Project,descriptive name,base name,label,enum count,unit,min,max,default,step,variable name
+BasicGain,Gain,gain,Gain,,dB,-100,12,0,,linearGain
+,,,,,,,,,,
+Tremolo,LFO Waveform,lfoWaveform,LFO,4,,,,0,,lfoWaveform
+Tremolo,LFO Frequency,lfoFreq,LFO Freq,,Hz,0.1,10,1,,lfoFreqHz
+Tremolo,Modulation Depth,modDepth,Mod Depth,,%,0,100,50,,modDepth
+,,,,,,,,,,
+RingMod,Carrier Frequency,carrierFreq,Carrier Freq,,Hz,1,1000,,,carrierFreqHz
+RingMod,LFO Waveform,lfoWaveform,LFO Waveform,5,,,,0,,lfoWaveform
+RingMod,LFO Frequency,lfoFreq,LFO Freq,,Hz,1,10,,,lfoFreqHz
+RingMod,LFO Sweep Width,lfoWidth,LFO Sweep Width,,Hz,0,100,,,lfoWidthHz
+,,,,,,,,,,
+Compressor,Compression Ratio,ratio,Ratio,,,1,20,1,,compressionRatio
+Compressor,Attack Time,attack,Attack Time,,ms,0.1,80,15,0.1,attackTimeMs
+Compressor,Release Time,release,Release Time,,ms,0.1,1000,100,0.1,releaseTimeMs
+Compressor,Threshold,threshold,Threshold,,dB,-60,0,0,0.5,threshold
+Compressor,Make-Up Gain,gain,Make-Up Gain,,dB,0,24,0,0.1,makeUpGain
+,,,,,,,,,,
+Distortion,Distortion Type,distType,Type,5,,,,0,,distType
+Distortion,Gain,gain,Gain,,dB,-24,24,0,0.1,linearGain
+,,,,,,,,,,
+ParametricEQ,Centre Frequency,centreFreq,Centre Freq,,Hz,10,20000,1000,,centreFreqHz
+ParametricEQ,Q,filterQ,Q,,,0.1,20,2,0.1,filterQ
+ParametricEQ,Gain,gain,Gain,,dB,-12,12,0,0.1,linearGain
+,,,,,,,,,,
+WahWah,Centre Frequency,centreFreq,Centre Freq,,Hz,400,2000,400,,centreFreqHz
+WahWah,Q,filterQ,Q,,,2,20,5,0.1,filterQ
+,,,,,,,,,,
+AutoWah,Centre Frequency,centreFreq,Centre Freq,,Hz,200,1000,350,,centreFreqHz
+AutoWah,Q,filterQ,Q,,,2,20,5,0.1,filterQ
+AutoWah,LFO Frequency,lfoFreq,LFO Freq,,Hz,0.2,20,2,,lfoFreqHz
+AutoWah,LFO Width,lfoWidth,LFO Width,,Hz,0,2000,1000,,lfoWidthHz
+AutoWah,Attack Time,attack,Attack Time,,sec,0,0.1,0.006,,attackTimeSec
+AutoWah,Decay Time,decay,Decay Time,,sec,0,2,0.2,,decayTimeSec
+AutoWah,Envelope Width,envWidth,Env Width,,Hz,0,4000,0,,envWidthHz
+,,,,,,,,,,
+Phaser,Base Frequency,baseFreq,Base Freq,,Hz,50,1000,200,0.5,baseFreqHz
+Phaser,Sweep Width,sweepWidth,Sweep Width,,Hz,50,5000,2000,0.5,sweepWidthHz
+Phaser,Depth,depth,,,%,0,100,100,1,depth
+Phaser,Feedback,feedback,Feedback,,%,0,99,0,1,feedback
+Phaser,LFO Frequency,lfoFreq,LFO Freq,,Hz,0.05,2,0.5,0.05,lfoFreqHz
+Phaser,Stereo,stereo,Stereo,2,,,,0,,stereoMode
+Phaser,LFO Waveform,lfoWaveform,LFO,4,,,,0,,lfoWaveform
+Phaser,Number of Filters,numFilters,Number of Filters,5,,,,1,,numFilters
+,,,,,,,,,,
+Delay,Delay Time,delayTime,Delay Time,,sec,0.01,2,0.5,0.01,delaySec
+Delay,Feedback,feedback,Feedback,,%,0,99.5,75,0.5,feedback
+Delay,Dry Mix Level,dryLevel,Dry Mix Level,,%,0,100,100,1,dryLevel
+Delay,Wet Mix Level,wetLevel,Delay Mix Level,,%,0,100,50,1,wetLevel
+,,,,,,,,,,
+PingPongDelay,Left Delay Time,delayTimeL,L-R Delay Time,,sec,0.01,2,0.5,0.01,delaySecL
+PingPongDelay,Right Delay Time,delayTimeR,R-L Delay Time,,sec,0.01,2,0.5,0.01,delaySecR
+PingPongDelay,Feedback,feedback,Feedback,,%,0,99.5,75,0.5,feedback
+PingPongDelay,Wet Mix Level,wetLevel,Delay Mix Level,,%,0,100,50,1,wetLevel
+,,,,,,,,,,
+Vibrato,LFO Waveform,lfoWaveform,LFO,5,,,,0,,lfoWaveform
+Vibrato,LFO Frequency,lfoFreq,LFO Freq,,Hz,0.5,5,2,0.025,lfoFreqHz
+Vibrato,Sweep Width,sweepWidth,Sweep Width,,sec,0.001,0.05,0.01,0.0005,sweepWidthHz
+Vibrato,Interpolation Type,interpType,Interpolation Type,3,,,,1,,interpolationType
+,,,,,,,,,,
+Flanger,Min Delay,minDelay,Min Delay,,ms,1,20,2.5,0.5,minDelayMs
+Flanger,Sweep Width,sweepWidth,Sweep Width,,ms,1,20,10,0.5,sweepWidthMs
+Flanger,Depth,depth,Depth,,%,0,100,100,1,depth
+Flanger,Feedback,feedback,Feedback,,%,0,50,0,1,feedback
+Flanger,LFO Frequency,lfoFreq,LFO Freq,,Hz,0.05,2,0.2,0.01,lfoFreqHz
+Flanger,Stereo,stereo,Stereo,2,,,,0,,stereoMode
+Flanger,LFO Waveform,lfoWaveform,LFO,4,,,,0,,lfoWaveform
+Flanger,Interpolation Type,interpType,Interpolation Type,3,,,,1,,interpolationType
+,,,,,,,,,,
+Chorus,Min Delay,minDelay,Min Delay,,ms,10,50,30,1,minDelayMs
+Chorus,Sweep Width,sweepWidth,Sweep Width,,ms,10,50,20,1,sweepWidthMs
+Chorus,Depth,depth,Depth,,%,0,100,100,1,depth
+Chorus,Voice Count,voiceCount,Number of Voices,,%,0,50,2,1,voiceCount
+Chorus,LFO Frequency,lfoFreq,LFO Freq,,Hz,0.05,2,0.2,0.025,lfoFreqHz
+Chorus,Stereo,stereo,Stereo,2,,,,0,,stereoMode
+Chorus,LFO Waveform,lfoWaveform,LFO,4,,,,0,,lfoWaveform
+Chorus,Interpolation Type,interpType,Interpolation Type,3,,,,1,,interpolationType
+,,,,,,,,,,
+Mverb,Damping,damping,Damping,,,0,1,0.5,0.01,damping
+Mverb,Density,density,Density,,,0,1,0.75,0.01,density
+Mverb,Bandwidth,bandwidth,Bandwidth,,,0,1,1,0.01,bandwidth
+Mverb,Decay,decay,Decay,,,0,1,0.75,0.01,decay
+Mverb,Predelay,predelay,Predelay,,,0,1,0,0.01,predelay
+Mverb,Size,roomSize,Room Size,,,0,1,0.8,0.01,roomSize
+Mverb,Mix,dryWetMix,Mix,,,0,1,0.5,0.01,dryWetMix
+Mverb,Late vs Early Mix,earlyLateMix,Early/Late Mix,,,0,1,0.5,0.01,earlyLateMix
+,,,,,,,,,,
+JuceVerb,Room Size,roomSize,Room Size,,,0,1,0.5,,roomSize
+JuceVerb,Damping,damping,Damping,,,0,1,0.5,,damping
+JuceVerb,Wet Level,wetLevel,Wet Level,,,0,1,0.33,,wetLevel
+JuceVerb,Dry Level,dryLevel,Dry Level,,,0,1,0.4,,dryLevel
+JuceVerb,Width,width,Width,,,0,1,1,,width
+JuceVerb,Freeze Mode,freezeMode,Freeze,2,,,,0,,freezeMode
+,,,,,,,,,,
+Leslie,Speed,speed,Speed,,,0,8,0,1,speed

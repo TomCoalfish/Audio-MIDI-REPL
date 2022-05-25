@@ -1,0 +1,25 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<http://github.com/geraldmwangi/StateVF>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-statevf.html> ;
+        modgui:stylesheet <modgui/stylesheet-statevf.css> ;
+        modgui:screenshot <modgui/screenshot-statevf.png> ;
+        modgui:thumbnail <modgui/thumbnail-statevf.png> ;
+        modgui:brand "JimsonDrift" ;
+        modgui:label "StateVF" ;
+        modgui:model "british" ;
+        modgui:panel "4-knobs" ;
+        modgui:color "metallic" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "cutoff" ;
+            lv2:name "Cutoff Frequency" ;
+        ] , [
+            lv2:index 1 ;
+            lv2:symbol "damping" ;
+            lv2:name "Damping" ;
+        ] ;
+    ] .
