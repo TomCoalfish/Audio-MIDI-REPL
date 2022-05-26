@@ -1,0 +1,47 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env:
+        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          packages:
+            - clang-7
+      env:
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+    - os: osx
+before_install:
+    - eval "${MATRIX_EVAL}"
+install:
+  - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get install cmake; fi
+  - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get install valgrind; fi
+before_script:
+  - git submodule init
+  - git submodule update
+script:
+  - mkdir build
+  - cd build
+  - cmake -DSOUNDTAILOR_HAS_GTEST=ON -DSOUNDTAILOR_ENABLE_SIMD=OFF ..
+  - make clean
+  - make
+  - if [ $TRAVIS_OS_NAME = linux ]; then valgrind --leak-check=full --track-origins=yes ./soundtailor/tests/soundtailor_tests; else ./soundtailor/tests/soundtailor_tests; fi

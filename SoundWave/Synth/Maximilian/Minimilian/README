@@ -1,0 +1,18 @@
+::::::::::::::::::::::::::What's minimilian?
+
+Minimilian is a reduced version of Maximilian
+Minimilian is an audio synthesis and signal processing library written in C++. 
+It's cross-platform compatible with MacOS, Windows, Linux and IOS systems.  
+
+The main features are:
+
+- sample playback, recording and looping
+- read from WAV.
+- a selection of oscillators and filters
+- enveloping
+- multichannel mixing for 1, 2, 4 and 8 channel setups
+- controller mapping functions
+- effects including delay, distortion, chorus, flanging
+- granular synthesis, including time and pitch stretching
+- atom synthesis
+- realtime music information retrieval functions: spectrum analysis, spectral features, octave analysis, Bark scale analysis, and MFCCs
