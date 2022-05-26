@@ -25,3 +25,6 @@
 [submodule "cli/ecasound"]
 	path = cli/ecasound
 	url = https://github.com/kaivehmanen/ecasound
+[submodule "q"]
+	path = q
+	url = https://github.com/cycfi/q
