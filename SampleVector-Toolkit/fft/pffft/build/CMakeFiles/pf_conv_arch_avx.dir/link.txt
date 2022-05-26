@@ -1,2 +1,0 @@
-/usr/bin/ar qc libpf_conv_arch_avx.a CMakeFiles/pf_conv_arch_avx.dir/pf_conv.cpp.o
-/usr/bin/ranlib libpf_conv_arch_avx.a

@@ -1,0 +1,15 @@
+# Prerequisites
+*.d
+
+# Compiled Object
+*.o
+*.obj
+
+# Dynamic Libraries
+*.so
+
+# Static Libraries
+*.a
+
+# Executables
+bin/*
