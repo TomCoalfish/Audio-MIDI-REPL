@@ -1,6 +1,6 @@
 # Audio-System
 Audio system with Lua interface
- 
+  
 ```lua
 require('audiosystem')
 require('sineosc')
