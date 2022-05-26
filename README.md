@@ -1,6 +1,31 @@
-# Audio-System
-Audio system with Lua interface
-  
+# Audio System
+   *  PortAudio/PortMidi   
+   *  RtAudio/RtMidi
+   *  Command Line Tools 
+        * lua-sox 
+        * sox 
+        * ecasound 
+        * AudioAnalyzer 
+        * Audio-Filter 
+        * ReSampler 
+        * sndfile-tools 
+        * SNDTools 
+        * Sox Resampler 
+        * Synth
+   *  Nodes 
+   *  Thelonious
+   *  Offline Rendering 
+        * Source/Sink
+        * SndFile
+        * SoundFileIn
+        * SoundFileOut
+        * WaveTable 
+        * SampleTable 
+        * FourierWave
+        * Generate Signal 
+        * SoundWave Core Algorithms 
+        
+# Lua Interface       
 ```lua
 require('audiosystem')
 require('sineosc')
@@ -78,3 +103,49 @@ audiosystem.InitAudioDevice(device,-1,2,44100,256)
 audiosystem.RunAudio()
 audiosystem.StopAudio()
 ```
+
+SoundWave (part of synthesizer algorithms)
+   *  Bandlimited Oscillators 
+   *  Stk Blit
+   *  minBlep
+   *  PolyBLEP 
+   *  PolyBLEPOSC 
+   *  Bleat 
+   *  Rschoscillators 
+   *  WaveTable 
+   *  FourierWave 
+   *  C++ DSP Filters 
+   *  RBJ Filters
+   *  Faust Filters
+   *  Moog Filters 
+   *  Moog Ladders 
+   *  Oberheim Multimode 
+   *  Korg 35 
+   *  State Variable 
+   *  Curtis 
+   *  Stk Filters 
+   *  Stk FM 
+   *  Stk FM Instruments 
+   *  Stk WvIn/WvOut 
+   *  Stk FileLoop 
+   *  Stk File 
+   *  Stk Envelopes 
+   *  Gamma 
+   *  SndFile 
+   *  Resampler 
+   *  Noise 
+   *  Pink Noise 
+   *  Envelopes 
+   *  ADSR 
+   *  AD 
+   *  Tau60 
+   *  BigVerb 
+   *  FreeVerb3 
+   *  GVerb 
+   *  Datorro-Verb 
+   *  VerbLib 
+   *  ConvolutionReverb 
+   *  lua-libsox 
+   *  audio-effects 
+
+
