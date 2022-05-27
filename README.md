@@ -1,4 +1,4 @@
-# Audio System 
+# Audio System Theory
    *  PortAudio/PortMidi   
    *  RtAudio/RtMidi
    *  Command Line Tools 
