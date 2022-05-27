@@ -12,6 +12,14 @@
         * SNDTools 
         * Sox Resampler 
         * Synth
+        * aplay
+        * utu
+        * PhaseVocoder
+        * Rubato
+        * voclib
+        * openSMILE
+        * AFEC
+        * python-audio-tools
    *  Nodes 
    *  Thelonious
    *  Offline Rendering 
