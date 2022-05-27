@@ -1,0 +1,24 @@
+[submodule "cli/utu"]
+	path = cli/utu
+	url = https://github.com/madronalabs/utu
+[submodule "cli/PhaseVocoder"]
+	path = cli/PhaseVocoder
+	url = https://github.com/tmdarwen/PhaseVocoder
+[submodule "cli/Rubato"]
+	path = cli/Rubato
+	url = https://github.com/chad-russell/Rubato
+[submodule "cli/voclib"]
+	path = cli/voclib
+	url = https://github.com/blastbay/voclib
+[submodule "cli/opensmile"]
+	path = cli/opensmile
+	url = https://github.com/audeering/opensmile
+[submodule "cli/AFEC"]
+	path = cli/AFEC
+	url = https://github.com/emuell/AFEC
+[submodule "cli/python-audio-tools"]
+	path = cli/python-audio-tools
+	url = https://github.com/tuffy/python-audio-tools
+[submodule "lua/lua-libsox"]
+	path = lua/lua-libsox
+	url = https://github.com/MasterVitronic/lua-libsox
