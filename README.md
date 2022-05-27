@@ -112,7 +112,7 @@ audiosystem.RunAudio()
 audiosystem.StopAudio()
 ```
 
-SoundWave (part of synthesizer algorithms)
+# SoundWave (part of synthesizer algorithms)
    *  Bandlimited Oscillators 
    *  Stk Blit
    *  minBlep
