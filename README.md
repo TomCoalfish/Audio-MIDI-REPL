@@ -1,4 +1,11 @@
 # Audio System Theory
+
+# Support 
+* online rendering
+* offline rendering
+* command shell
+
+# System
    *  PortAudio/PortMidi   
    *  RtAudio/RtMidi
    *  Command Line Tools 
