@@ -1,5 +1,5 @@
 # Audio System Theory
-Unified DSP Front 
+Unified DSP Front  
 
 # Support 
 * online rendering
