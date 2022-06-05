@@ -1,10 +1,4 @@
-# Audio System Theory
-Unified DSP Front  
-
-# Support 
-* online rendering
-* offline rendering
-* command shell
+# Audio/MIDI REPL
 
 # System
    *  PortAudio/PortMidi   
